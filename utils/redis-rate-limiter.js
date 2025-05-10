@@ -21,9 +21,11 @@ class RedisRateLimiter {
             keyPrefix: 'voice-flow-project-limit', // important to keep distinct from other limiters
         };
 
+        console.log('[RedisRateLimiter.call] success', opts)
+
         const rateLimiterRedis = new RateLimiterRedis(opts);
 
-        await new Promise((res) => {
+        return await new Promise((res) => {
             // pro projekt einer hochzählen
             rateLimiterRedis.consume(projectId)
                 .then((rateLimiterRes) => {

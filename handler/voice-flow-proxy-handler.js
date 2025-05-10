@@ -7,23 +7,40 @@ class VoiceFlowProxyHandler {
 
         const canUseProxy = await RedisRateLimiter.call(req);
 
-        if (!canUseProxy){
-            res.send('maximal usage exceeded');
-            return;
+        console.log('canUseProxy', canUseProxy);
+
+        if (!canUseProxy) {
+            return res.status(429).send('Maximal usage exceeded');
         }
 
-        // forward to Voice flow DM API
-        const response = await fetch(
-            `${process.env.VOICE_FLOW_HOST}/state/${projectId}/user/${userId}/interact?`,
-            {
+        // Build base URL
+        const baseUrl = `${process.env.VOICE_FLOW_HOST}/state/${projectId}/user/${userId}/interact`;
+
+        // Append any query parameters from the original request
+        const url = new URL(baseUrl);
+        url.search = new URLSearchParams(req.query).toString();
+
+        console.log('url', url.toString())
+
+        try {
+            const response = await fetch(url.toString(), {
                 method: 'POST',
-                headers: { Authorization: `Bearer ${process.env.VOICEFLOW_API_KEY}` },
+                headers: {
+                    Authorization: `Bearer ${process.env.VOICEFLOW_API_KEY}`,
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(req.body),
-            }
-        );
-        const data = await response.json();
-        res.json(data);
-    }
+            });
+
+            // const data = await response.json();
+            // res.status(response.status).json(data);
+            const data = await response.json();
+            res.json(data);
+        } catch (err) {
+            console.error('❌ Voiceflow proxy error:', err);
+            res.status(500).json({ error: 'Internal proxy error' });
+        }
+    };
 
     static widget = async (req, res) => {
         const { projectId, userId } = req.params;

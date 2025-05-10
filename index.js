@@ -18,3 +18,12 @@ app.use('/', routes);
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
+
+process.on('uncaughtException', (err) => {
+    console.error('🟥 Uncaught Exception:', err.stack || err);
+    process.exit(1); // Optional: force exit to avoid hanging
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('🟧 Unhandled Rejection:', reason);
+});
