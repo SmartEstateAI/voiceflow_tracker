@@ -5,14 +5,16 @@ const RedisClient = require("../utils/redis-client");
 
 const router = express.Router();
 
-// Define routes
 router.post('/v2/public/project/:projectId/user/:userId/interact/stream', async (req, res) => {
     await VoiceFlowProxyHandler.interact(req, res);
 });
-// Define routes
+router.post('/public/:projectId/transcripts', async (req, res) => {
+    await VoiceFlowProxyHandler.transscripts(req, res);
+});
 router.get('/v2/public/:projectId/settings/widget', async (req, res) => {
     await VoiceFlowProxyHandler.widget(req, res);
 });
+
 
 router.get('/api/ping', async (req, res) => {
     res.send('pong');

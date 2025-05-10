@@ -39,6 +39,21 @@ class VoiceFlowProxyHandler {
         const data = await response.json();
         res.json(data);
     }
+
+    static transscripts = async (req, res) => {
+        const { projectId, userId } = req.params;
+
+        // forward to Voice flow DM API
+        const response = await fetch(
+            `${process.env.VOICE_FLOW_HOST}/public/${projectId}/transcripts`,
+            {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${process.env.VOICEFLOW_API_KEY}` }
+            }
+        );
+        const data = await response.json();
+        res.json(data);
+    }
 }
 
 module.exports = VoiceFlowProxyHandler
