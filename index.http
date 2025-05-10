@@ -1,1 +1,9 @@
-GET {{url}}/123
+
+###
+POST {{url}}/interact/1/1
+Content-Type: application/json
+
+{
+  "input": "Hallo:)"
+}
+
