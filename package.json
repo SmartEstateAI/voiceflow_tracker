@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "buld": "echo \"no build currently needed\"",
     "dev": "nodemon index.js"
   },
   "repository": {
