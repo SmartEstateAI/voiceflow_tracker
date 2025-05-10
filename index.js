@@ -2,8 +2,11 @@ const express = require('express');
 const app = express();
 const routes = require('./routes/index');
 const PORT = process.env.PORT || 3000;
+const cors = require('cors');
+require('dotenv').config();
 
-// Middleware (optional example)
+// Allow ALL origins
+app.use(cors());
 app.use(express.json());
 
 // Use Routes

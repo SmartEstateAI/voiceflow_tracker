@@ -1,0 +1,15 @@
+
+### interact endpoint
+POST {{url}}/interact/{{projectId}}/{{userId}}
+Content-Type: application/json
+
+{
+  "input": "Hallo:)"
+}
+
+
+### ping backend
+GET {{url}}/api/ping
+
+### ping backend database
+GET {{url}}/api/ping-db

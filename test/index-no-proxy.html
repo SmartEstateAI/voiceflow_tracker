@@ -1,0 +1,46 @@
+<html>
+
+<head>
+    <script type="text/javascript">
+        (function(d,t){
+            if(window.voiceflowLoaded) return;
+            window.voiceflowLoaded=true;
+
+            var v=d.createElement(t),s=d.getElementsByTagName(t)[0];
+
+            v.onload=function(){
+                window.voiceflow.chat.load({
+                    verify:{projectID:"67ca3149359370266bce8b5c"},
+                    url:"https://general-runtime.voiceflow.com",
+                    versionID:"production",
+                    assistant:{persistence:"memory"}
+                }).then(function(){
+                    setTimeout(function(){
+                        window.voiceflow.chat.proactive.clear();
+                        window.voiceflow.chat.proactive.push({type:"text",payload:{message:"Hi, ich bin der Digitale Demo Chatbot von Fastwave"}});
+                    },7500);
+                    setTimeout(function(){
+                        window.voiceflow.chat.proactive.push({type:"text",payload:{message:"Klicke einfach auf den Chat um mich auszuprobieren"}});
+                    },12500);
+                    setTimeout(function(){
+                        if(window.voiceflow.chat.reset) window.voiceflow.chat.reset();
+                    },21600000); // 6 hours
+                });
+            };
+
+            v.src="https://cdn.voiceflow.com/widget-next/bundle.mjs";
+            v.type="text/javascript";
+            s.parentNode.insertBefore(v,s);
+        })(document,"script");
+    </script>
+</head>
+
+<body>
+
+<div style="padding: 10rem">
+    <h1>https://general-runtime.voiceflow.com mit Chatbot</h1>
+</div>
+
+</body>
+
+</html>

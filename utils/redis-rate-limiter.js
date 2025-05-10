@@ -5,39 +5,43 @@ class RedisRateLimiter {
 
 
     static call = async (req) => {
-
-        const client = new RedisClient();
-        client.connect();
+        const {projectId, userId} = req.params;
+        const client = new RedisClient()
+        await client.connect();
 
         const opts = {
-            // TODO put to env
-            storeClient:  client.redis,
-            points: 5, // Number of points
-            duration: 5, // Per second(s)
+            storeClient: client.redis,
 
-            // Custom
-            blockDuration: 0, // Do not block if consumed more than points
-            keyPrefix: 'rlflx', // must be unique for limiters with different purpose
+            // Pull values from env for flexibility
+            points: parseInt(process.env.RATE_LIMIT_POINTS || '1000'), // e.g. 1000 messages
+            duration: parseInt(process.env.RATE_LIMIT_DURATION || (60 * 60 * 24 * 30).toString()), // e.g. 1 month
+
+            blockDuration: 0, // Don't block after limit, just reject
+
+            keyPrefix: 'voice-flow-project-limit', // important to keep distinct from other limiters
         };
 
         const rateLimiterRedis = new RateLimiterRedis(opts);
 
-        rateLimiterRedis.consume(req.ip)
-            .then((rateLimiterRes) => {
-                client.disconnect();
-                return true;
-            })
-            .catch((rejRes) => {
-                if (rejRes instanceof Error) {
-                    // TODO add some error handling here
+        await new Promise((res) => {
+            // pro projekt einer hochzählen
+            rateLimiterRedis.consume(projectId)
+                .then((rateLimiterRes) => {
                     client.disconnect();
-                    return false
-                } else {
-                    // TODO add some error handling here
-                    client.disconnect();
-                    return false
-                }
-            });
+                    res(true)
+                })
+                .catch((rejRes) => {
+                    if (rejRes instanceof Error) {
+                        // TODO add some error handling here
+                        client.disconnect();
+                        res(false)
+                    } else {
+                        // TODO add some error handling here
+                        client.disconnect();
+                        res(false)
+                    }
+                });
+        })
     }
 
 

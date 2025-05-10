@@ -1,39 +1,31 @@
-// RedisClient.js
 const Redis = require('ioredis');
 
 class RedisClient {
-    constructor(options = {}) {
-        // Use defaults if options not provided
-        this.host = options.host || process.env.REDIS_HOST;
-        this.port = options.port || process.env.REDIS_PORT;
-        this.password = options.password || process.env.REDIS_PW;
+    redis = null;
 
-        this.redis = null;
-    }
-
-    connect() {
+    async connect() {
         if (!this.redis) {
-            this.redis = new Redis({
-                host: this.host,
-                port: this.port,
-                password: this.password,
-            });
+            const connectionString = process.env.REDIS_CONNECTION_STRING;
 
-            this.redis.on('connect', () => {
-                console.log('✅ Redis connected');
-            });
+            if (!connectionString) {
+                throw new Error('❌ Missing REDIS_CONNECTION_STRING env variable!');
+            }
 
-            this.redis.on('error', (err) => {
-                console.error('❌ Redis error:', err);
-            });
-        }
+            console.log('Connecting to Redis with:', connectionString);
 
-        return this.redis;
-    }
+            return await new Promise(resolve => {
+                this.redis = new Redis(connectionString);
 
-    getClient() {
-        if (!this.redis) {
-            throw new Error('Redis connection not initialized. Call connect() first.');
+                this.redis.on('connect', () => {
+                    console.log('✅ Redis connected');
+                    resolve(this.redis)
+                });
+
+                this.redis.on('error', (err) => {
+                    console.error('❌ Redis error:', err);
+                    resolve(null)
+                });
+            })
         }
         return this.redis;
     }
