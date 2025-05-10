@@ -7,6 +7,8 @@ require('dotenv').config();
 
 // Allow ALL origins
 app.use(cors());
+
+// json middleware
 app.use(express.json());
 
 // Use Routes

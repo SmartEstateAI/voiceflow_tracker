@@ -27,10 +27,12 @@ class RedisRateLimiter {
             // pro projekt einer hochzählen
             rateLimiterRedis.consume(projectId)
                 .then((rateLimiterRes) => {
+                    console.log('[RedisRateLimiter.call] success', rateLimiterRes)
                     client.disconnect();
                     res(true)
                 })
                 .catch((rejRes) => {
+                    console.log('[RedisRateLimiter.call] error', rejRes)
                     if (rejRes instanceof Error) {
                         // TODO add some error handling here
                         client.disconnect();
