@@ -5,7 +5,10 @@ class RedisRateLimiter {
 
 
     static call = async (req) => {
-        const {projectId, userId} = req.params;
+        const match = req.url.match(/project\/([^/]+)\/user\/([^/]+)\//);
+        const projectId = match[1];
+        // const userId = match[2];
+
         const client = new RedisClient()
         await client.connect();
 
